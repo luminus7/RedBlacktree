@@ -80,11 +80,12 @@ static void __rb_erase_color(RBT * x, RBT * P, RBroot * root)
 	if (x)
 		x->color = 'B';
 }
-
-void rb_erase(RBT * x, RBroot * root) //BST delete?
+void rb_erase(RBroot *root, int value) //BST delete?
 {
-	RBT * child, * P;
-	int color;
+	printf("deleting: %d\n", value);
+	RBT *child, *P, *x;
+	x = search(root->root_ptr, value);
+	char color;
 
 	if (!x->left)
 		child = x->right;
