@@ -2,9 +2,9 @@ static void __rb_erase_color(RBT * x, RBT * P, RBroot * root)
 {
 	RBT * Sib;
 
-	while ((!x || x->color == 'B') && x != root->root_ptr)//operate til doubleblack node is Black, and not root
+	while ((!x || x->color == 'B') && x != root->root_ptr)
 	{
-		if (P->left == x) //doubleblack is left child of its parent (parent->left exist); RIGHT SIBLING
+		if (P->left == x)
 		{
 			Sib = P->right; //sibling is named as other in this code
 			if (Sib->color == 'R') //Case 1 (Red sibling)
@@ -14,7 +14,7 @@ static void __rb_erase_color(RBT * x, RBT * P, RBroot * root)
 				__rotate_left(P, root);
 				Sib = P->right; //What the...
 			}
-			if ((!Sib->left || Sib->left->color == 'B') && (!Sib->right || Sib->right->color == 'B')) //Case 2-A
+			if ((!Sib->left || Sib->left->color == 'B') && (!Sib->right || Sib->right->color == 'B'))
 			{
 				Sib->color = 'R';
 				x = P;
@@ -22,10 +22,10 @@ static void __rb_erase_color(RBT * x, RBT * P, RBroot * root)
 			}
 			else //Case 2-B and Case 2-C
 			{
-				if (!Sib->right || Sib->right->color == 'B') // Case 2-B right_nephew is NULL or Black node with value
+				if (!Sib->right || Sib->right->color == 'B')
 				{
 					RBT * l_nephew;
-					if ((l_nephew = Sib->left)) //Sib->left is not NIL node
+					if ((l_nephew = Sib->left))
 						l_nephew->color = 'B';
 					Sib->color = 'R';
 					__rotate_right(Sib, root);
@@ -33,7 +33,7 @@ static void __rb_erase_color(RBT * x, RBT * P, RBroot * root)
 				}
 				Sib->color = P->color; //Case 2-C
 				P->color = 'B';
-				if (Sib->right) //why..?
+				if (Sib->right)
 					Sib->right->color = 'B';
 				__rotate_left(P, root);
 				x = root->root_ptr;
@@ -60,7 +60,7 @@ static void __rb_erase_color(RBT * x, RBT * P, RBroot * root)
 			{
 				if (!Sib->left || Sib->left->color == 'B')
 				{
-					RBT * r_nephew; //원래 register RBT *r_nephew 였음..
+					RBT * r_nephew;
 					if ((r_nephew = Sib->right))
 						r_nephew->color = 'B';
 					Sib->color = 'R';
@@ -151,7 +151,7 @@ void rb_erase(RBroot *root, int value)
 	else
 		root->root_ptr = child;
 
- color://?
+ color:
 	if (color == 'B')
 		__rb_erase_color(child, P, root);
 }
