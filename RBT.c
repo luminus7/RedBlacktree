@@ -314,7 +314,7 @@ void __rb_erase_color(RBT *x, RBT *P, RBroot *root)
 
 	while((!x || x->color == 'B') && x != root->root_ptr)
 	{
-		if(P->left == x) //doubleblack is left child of its parent (parent->left exist); RIGHT SIBLING
+		if(P->left == x) //doubleblack is left child of its parent: RIGHT SIBLING
 		{
 			Sib = P->right;
 			if(Sib->color == 'R') //Case 1 (Red sibling)
