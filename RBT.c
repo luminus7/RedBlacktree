@@ -98,26 +98,8 @@ void RR_restruct(RBT *x, RBroot *root)
 	GP = x->parent->parent;
 	P = x->parent;
 	U = GP->left;	
-/*
-	if(GP->parent)
-	{	
-		printf("HEY GP->parent exist~!\n");
-		if(GP == GP->parent->left)
-		{	
-			printf("if GP->parent exist!! // GP is lchild\n");
-			__rotate_left(GP, root);
-		}
-		else if(GP == GP->parent->right)
-		{	
-			printf("if GP->parent exist!! // GP is lchild\n");
-			__rotate_left(GP, root);
-		}
-	}
-	else //(!(GP->parent))  //GP was root node!!
-	{
-*///		printf("GP->parent does not exist...ToT\n");
-		__rotate_left(GP, root);
-//	}
+	__rotate_left(GP, root);
+	
 	SwapColor(GP);
 	SwapColor(P);
 }
@@ -131,9 +113,7 @@ void LR_restruct(RBT *x, RBroot *root)
 	U = GP->right;
 	__rotate_left(P, root);
 	
-	//apply LL case
 	LL_restruct(P, root);
-
 }
 
 
@@ -143,11 +123,9 @@ void RL_restruct(RBT *x, RBroot *root)
 	GP = x->parent->parent;
 	P = x->parent;
 	U = GP->right;
-
-	//right rotate(small)
 	__rotate_right(P, root);
-	RR_restruct(P, root);
 
+	RR_restruct(P, root);
 }
 
 void restruct(RBT *x, RBroot *root)
@@ -203,14 +181,12 @@ RBT *recolor(RBT *x, RBroot *root)
 			printf("propagate...restruct\n");
 			restruct(x, root);
 		}
-		printf("asd\n");
 		x = GP;
 		P = x->parent;
 
 		printf("end of while\n");
 	}
 
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 	if(root->root_ptr->color == 'R')
 		SwapColor(root->root_ptr);
 	return root->root_ptr;
@@ -219,7 +195,7 @@ RBT *recolor(RBT *x, RBroot *root)
 
 //fixup tree when each time of insertion occurs for each inserted node
 //double r을 root부터 내려가며 항상 조사해줄 필요가 없을듯... 매 insert마다 InsertFixup로 고쳐줄거고 recoloring은 자체적으로 propagate시킬거니까!
-RBT* InsertFixup(RBT *x, RBroot *root) //여기에 RBT **root 써놨었는데 왜 그랬을까?
+RBT* InsertFixup(RBT *x, RBroot *root)
 {
 	if(x->parent != NULL && x->parent->parent != NULL)
 	{
@@ -338,65 +314,55 @@ void __rb_erase_color(RBT *x, RBT *P, RBroot *root)
 
 	while((!x || x->color == 'B') && x != root->root_ptr)
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		if(P->left == x) //doubleblack is left child of its parent (parent->left exist); RIGHT SIBLING
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
-			Sib = P->right; //sibling is named as other in this code
+			Sib = P->right;
 			if(Sib->color == 'R') //Case 1 (Red sibling)
 			{
 				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				Sib->color = 'B';
 				P->color = 'R';
 				__rotate_left(P, root);
-				Sib = P->right; //
+				Sib = P->right;
 			}
 	
-			//else 로 묶을 필요 없으니까 굳이 묶지 않았네. Case2
+			//Case2 start
 			if((!Sib->left || Sib->left->color == 'B') && (!Sib->right || Sib->right->color == 'B')) //Case 2-A
 			{
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				Sib->color = 'R';
+				
 				x = P;
 				P = x->parent;
 			}
 			else //Case 2-B and Case 2-C
 			{
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				if(!Sib->right || Sib->right->color == 'B') // Case 2-B right_nephew is NULL or Black node with value
 				{
-					printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 					RBT * l_nephew;
-					if((l_nephew = Sib->left)) //Sib->left is not NIL node
+					if((l_nephew = Sib->left))
 					{
-						printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 						l_nephew->color = 'B';
 					}
 					Sib->color = 'R';
 					__rotate_right(Sib, root);
-					Sib = P->right; //What the...
+					Sib = P->right;
 				}
 				Sib->color = P->color; //Case 2-C
 				P->color = 'B';
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
-				if(Sib->right) //check if r_nep is NULL and if not change r_nep color to Black
+				if(Sib->right) //check if r_nep is NULL, if not change r_nep color to Black
 				{
-					printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 					Sib->right->color = 'B';
 				}
 				__rotate_left(P, root);
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				x = root->root_ptr;
 				break;
 			}
 		}
 		else //mirror case(double black is right child); LEFT SIBLING
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			Sib = P->left;
 			if(Sib->color == 'R')
 			{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				Sib->color = 'B';
 				P->color = 'R';
 				__rotate_right(P, root);
@@ -404,38 +370,30 @@ void __rb_erase_color(RBT *x, RBT *P, RBroot *root)
 			}
 			if((!Sib->left || Sib->left->color == 'B') && (!Sib->right || Sib->right->color == 'B'))
 			{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				Sib->color = 'R';
 				x = P;
 				P = x->parent;
 			}
 			else
 			{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				if(!Sib->left || Sib->left->color == 'B')
 				{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
-					RBT * r_nephew; //원래 register RBT *r_nephew 였음..
+					RBT * r_nephew;
 					if((r_nephew = Sib->right))
 					{
-						printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 						r_nephew->color = 'B';
 					}
 					Sib->color = 'R';
 					__rotate_left(Sib, root);
-					printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 					Sib = P->left;
 				}
 				Sib->color = P->color;
 				P->color = 'B';
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				if(Sib->left)
 				{
-					printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 					Sib->left->color = 'B';
 				}
 				__rotate_right(P, root);
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				x = root->root_ptr;
 				break;
 			}
@@ -443,60 +401,51 @@ void __rb_erase_color(RBT *x, RBT *P, RBroot *root)
 	}
 	if(x)
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		x->color = 'B';
 	}
 }
 
-void rb_erase(RBroot *root, int value) //BST delete!
+void rb_erase(RBroot *root, int value) //simple BST delete
 {
 	printf("deleting: %d\n", value);
-	RBT *child, *P, *x;
-	x = search(root->root_ptr, value);
+	RBT *child, *P, *x, *temp;
+	temp = x = search(root->root_ptr, value);
 	char color;
-
-	if(!x->left) //x is node to delete
+	
+	//x is node to delete
+	if(!x->left) //deal with both NIL children case && only left child case
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		child = x->right;
 	}
-	else if(!x->right)
+	else if(!x->right) //deal with only right child case
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		child = x->left;
 	}
-	else //deleting node have 2 children
+	else //deleting node with 2 children
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		RBT *old = x, *left; //old is node to delete
 
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		x = x->right; //finding successor(left-most node of right subtree)
 		while((left = x->left))
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			x = left;
 		}
-		child = x->right; //
+		child = x->right;
 		P = x->parent;
 		color = x->color;
 
 		if(child)
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			child->parent = P;
 		}
 		if(P)
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			if(P->left == x)
 			{
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				P->left = child;
 			}
 			else
 			{
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				P->right = child;
 			}
 		}
@@ -505,9 +454,9 @@ void rb_erase(RBroot *root, int value) //BST delete!
 
 		if(x->parent == old)
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			P = x;
 		}
+		//replace node old with successor node x
 		x->parent = old->parent; 
 		x->color = old->color; 
 		x->right = old->right;
@@ -517,31 +466,24 @@ void rb_erase(RBroot *root, int value) //BST delete!
 		{
 			if(old->parent->left == old)
 			{		
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				old->parent->left = x;
 			}
 			else
 			{
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				old->parent->right = x;
 			}
 		}else{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			root->root_ptr = x;
 		}
 
 		old->left->parent = x;
 		if(old->right)
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			old->right->parent = x;
 		}
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		goto color;
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 	}
 		
-	printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 	P = x->parent;
 	color = x->color;
 
@@ -551,23 +493,19 @@ void rb_erase(RBroot *root, int value) //BST delete!
 	}
 	if(P)
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		if (P->left == x)
 		{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			P->left = child;
 		}else{
-			printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 			P->right = child;
 		}
 	}
 	else
 		root->root_ptr = child;
 
- color://goto statement를 사용해서 쓰는거네 이거 ㅋㅋㅋ
+ color:
 	if (color == 'B')
 	{
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		__rb_erase_color(child, P, root);
 	}
 }
