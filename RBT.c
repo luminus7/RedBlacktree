@@ -319,7 +319,6 @@ void __rb_erase_color(RBT *x, RBT *P, RBroot *root)
 			Sib = P->right;
 			if(Sib->color == 'R') //Case 1 (Red sibling)
 			{
-				printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 				Sib->color = 'B';
 				P->color = 'R';
 				__rotate_left(P, root);
@@ -575,7 +574,6 @@ int main()
 	RBroot *root = (RBroot *)malloc(sizeof(RBroot)); //한번만 만들어 주면 되니까 그냥 main에서 만들어버리자.
 	
 		//scanf("Insert value: %d", &insert_value);
-		printf("current line : %d\n current func : %s\n",__LINE__, __func__);
 		root->root_ptr = insert(root,10);
 		printf("root clr\n");
 		insert_check(root);
